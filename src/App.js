@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "./App.css";
+import React, { useState, useEffect } from "react"
+import axios from "axios"
+import "./App.css"
 
 function App() {
-  const [result, setResult] = useState("");
-  const [input, setInput] = useState("");
-  const [img, setImg] = useState("");
-  const [caption, setCaption] = useState("");
-  const [api_Result, setApi_Result] = useState([]);
-  const [click, setClick] = useState(false);
+  const [result, setResult] = useState("")
+  const [input, setInput] = useState("")
+  const [img, setImg] = useState("")
+  const [caption, setCaption] = useState("")
+  const [api_Result, setApi_Result] = useState([])
+  const [click, setClick] = useState(false)
   // const [protect, setProtect] = useState(false);
 
   // smaller but more mothod -> from uint 8 decode to html str
@@ -72,29 +72,29 @@ function App() {
 
   useEffect(() => {
     // setProtect(false);
-    setClick(false);
-  }, [api_Result]);
+    setClick(false)
+  }, [api_Result])
 
   useEffect(() => {
     try {
       if (result) {
-        let htmlParser = new DOMParser();
-        let htmlDoc = htmlParser.parseFromString(result, "text/html");
+        let htmlParser = new DOMParser()
+        let htmlDoc = htmlParser.parseFromString(result, "text/html")
 
         //check ig url that have picture or not if not it mean invalid link ig
         if (!htmlDoc.querySelector("meta[property='og:image']")) {
-          throw new Error("instagram url is invalid");
+          throw new Error("instagram url is invalid")
         }
         let imgSrc = htmlDoc
           .querySelector("meta[property='og:image']")
-          .getAttribute("content");
+          .getAttribute("content")
         let captionSrc = JSON.parse(
           htmlDoc.querySelector("script[type='application/ld+json']").innerHTML
-        );
+        )
 
         async function getImageDetection(imgSrc) {
           try {
-            let api_Key = "AIzaSyDIlMt1FZpB4eZIfsDUm2VE5LTYG_wvYvM";
+            let api_Key = "AIzaSyDIlMt1FZpB4eZIfsDUm2VE5LTYG_wvYvM"
             let getResponse = await fetch(
               `https://vision.googleapis.com/v1/images:annotate?key=${api_Key}`,
               {
@@ -121,26 +121,26 @@ function App() {
                   ]
                 })
               }
-            );
-            let { responses } = await getResponse.json();
-            let res_array = await responses[0].localizedObjectAnnotations;
+            )
+            let { responses } = await getResponse.json()
+            let res_array = await responses[0].localizedObjectAnnotations
 
             // set shor element
-            setApi_Result(res_array.map(item => item.name));
-            setImg(imgSrc);
-            setCaption(captionSrc.caption);
+            setApi_Result(res_array.map(item => item.name))
+            setImg(imgSrc)
+            setCaption(captionSrc.caption)
           } catch (err) {
-            setClick(false);
-            console.error("detail : ", err);
+            setClick(false)
+            console.error("detail : ", err)
           }
         }
-        getImageDetection(imgSrc);
+        getImageDetection(imgSrc)
       }
     } catch (err) {
-      setClick(false);
-      console.error(err);
+      setClick(false)
+      console.error(err)
     }
-  }, [result]);
+  }, [result])
 
   let fetchData = async src => {
     try {
@@ -152,14 +152,14 @@ function App() {
       let raw_resp = await axios({
         method: "get",
         url: src
-      });
-      let resp = await raw_resp.data;
-      setResult(resp);
+      })
+      let resp = await raw_resp.data
+      setResult(resp)
     } catch (err) {
-      console.error("error when fetching");
-      setClick(false);
+      console.error("error when fetching")
+      setClick(false)
     }
-  };
+  }
 
   useEffect(() => {
     try {
@@ -170,20 +170,20 @@ function App() {
       ) {
         // if (!protect) {
         // setProtect(true);
-        fetchData(input);
+        fetchData(input)
         // }
       } else if (input && click) {
-        setClick(false);
-        alert("input instagram url");
+        setClick(false)
+        alert("ใส่ url ผิด หรือ ไม่่ใช่ url")
       } else if (!input && click) {
-        setClick(false);
-        alert("input instagram url");
+        setClick(false)
+        alert("input url")
       } else {
       }
     } catch (err) {
-      console.error(err);
+      console.error(err)
     } // eslint-disable-next-line
-  }, [input, click]);
+  }, [input, click])
 
   return (
     <div className="center">
@@ -218,7 +218,7 @@ function App() {
         </p>
       </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
